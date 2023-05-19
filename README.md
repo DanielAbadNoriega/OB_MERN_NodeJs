@@ -92,7 +92,7 @@ NOTE: with npx we force to use this dependecy, if this doesn't exist, it will do
 
 ```
 
-$ npm i -D @types/express @types/node
+$ npm i -D typescript @types/express @types/node
 
 ```
 
@@ -184,7 +184,7 @@ $ npm i -D jest
 
 ```
 
-$ npm i -D ts-jest @types/jest
+$ npm i -D ts-jest ts-node
 
 ```
 
@@ -194,6 +194,11 @@ $ npm i -D ts-jest @types/jest
 
 $ npm i -D @types/jest
 
+```
+
+> After installation, we will execute the next command to configure jest.
+```
+$ npx jest --init
 ```
 
 - **supertest:** The motivation with this module is to provide a high-level abstraction for testing HTTP, while still allowing you to drop down to the lower-level API provided by superagent.
