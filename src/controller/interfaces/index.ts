@@ -1,5 +1,9 @@
-import { BasicResponse } from "../types";
+import { BasicResponse, ByeResponse } from "../types";
 
 export interface IHelloController {
   getMessage(name?: string): Promise<BasicResponse>;
+}
+
+export interface IByeController {
+  getMessage(name?: string): Promise<ByeResponse>;
 }

@@ -20,8 +20,11 @@
   "author": "Daniel Abad Noriega",
   "license": "ISC",
   "dependencies": {
+    "@types/cors": "^2.8.13",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "helmet": "^7.0.0",
     "ts-node": "^10.9.1"
   },
   "devDependencies": {

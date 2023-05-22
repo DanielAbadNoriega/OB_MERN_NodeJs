@@ -1,28 +1,21 @@
-import express, { Express, Request, Response, NextFunction } from 'express';
-import dotenv from 'dotenv';
+/**
+ * Second configuration using the server/index.ts configuration
+ */
+import dotenv from "dotenv";
+import server from "./src/server";
+import { LogError, LogSuccess } from "./src/utils/logger";
 
-// Configuration
+// Configuration the .env file
 dotenv.config();
 
-// Express APP
-const app: Express = express();
-const port: string | number = process.env.PORT || 8000;
+const port = process.env.PORT || 8000;
 
-app.get(
-  '/',
-  (req: Request, res: Response, next: NextFunction) => {
-    res.send('Hello World from index.ts probando');
-    console.log('Entrando por la raiz');
-    next();
-  },
-  (req: Request, res: Response) => {
-    res.send('Hello World from B!');
-  }
-);
-
-app.listen(port, () => {
-  console.log(
-    `[ NodeJs - Listening ] Listening from index.ts at http://localhost:${port}`
-  );
+// * Execute SERVER
+server.listen(port, () => {
+  LogSuccess(`[SERVER ON]: Running in http://localhost:${port}/api`);
 });
 
+// ** Control SERVER ERROR
+server.on("error", (error) => {
+  LogError(`[ SERVER ERROR]: ${error}`);
+});
