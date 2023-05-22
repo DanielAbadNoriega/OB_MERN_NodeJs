@@ -36,6 +36,38 @@
 
 3. Realiza pruebas con Postman y demuestra que funciona correctamente
 
+## Ejercicio 2:
+
+1. Replicar proyecto completo Node con TS y Express visto en el vídeo
+
+2. Replicar la creación de base de datos en MongoDB
+
+   - Crear una colección llamada Katas (retos de programación)
+
+     - Cada documento deberá tener:
+
+       ```json
+       {
+
+         Name
+
+         Description
+
+         Level (nivel de dificultad numérico)
+
+         User (id asociado al usuario que lo ha creado)
+
+         Date (Fecha de creación del reto)
+
+         Valoration (sobre 5, valor numérico)
+
+         Chances (número de intentos realizados por otros usuarios)
+
+       }
+       ```
+
+3. Crear archivo de Kata.Entity.ts con el esquema Mongoose correspondiente
+
 ## Node JS:
 
 1. Main npm installations:
