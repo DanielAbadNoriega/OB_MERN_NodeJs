@@ -152,7 +152,7 @@ $ npm i -D webpack-node-externals
 
 ```
 
-$ npm i -D Webpack-shell-plugin
+$ npm i -D webpack-shell-plugin
 
 ```
 
@@ -197,6 +197,7 @@ $ npm i -D @types/jest
 ```
 
 > After installation, we will execute the next command to configure jest.
+
 ```
 $ npx jest --init
 ```
@@ -241,6 +242,54 @@ $ npm i helmet
 
 ```
 
+- **mongoose:** Mongoose is a MongoDB object modeling tool designed to work in an asynchronous environment
+
+```
+
+$ npm i -D mongoose
+
+```
+
+- **@types/swagger-jsdoc:** This package contains type definitions for swagger-jsdoc. Documentations with swagger
+
+```
+
+$ npm i -D @types/swagger-jsdoc
+
+```
+
+- **swagger-jsdoc:** This library reads your JSDoc-annotated source code and generates an OpenAPI (Swagger) specification.
+
+```
+
+$ npm i --save swagger-jsdoc
+
+```
+
+- **@types/swagger-ui-express:** definitions for swagger-ui-express
+
+```
+
+$ npm i -D @types/swagger-ui-express
+
+```
+
+- **swagger-ui-express:** This module allows you to serve auto-generated swagger-ui generated API docs from express, based on a swagger.json file. The result is living documentation for your API hosted from your API server via a route.
+
+```
+
+$ npm i --save swagger-ui-express
+
+```
+
+- **tsoa:** TypeScript controllers and models as the single source of truth for your API. More in documentation.
+
+```
+
+$ npm i tsoa
+
+```
+
 <!-- - **:**
 
 ```
@@ -248,7 +297,3 @@ $ npm i helmet
 $ npm i -D
 
 ```-->
-
-```
-
-```
