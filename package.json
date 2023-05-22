@@ -4,8 +4,9 @@
   "description": "MERN - Exercise 1",
   "main": "index.js",
   "scripts": {
+    "swagger": "tsoa spec",
     "start:local": "npx nodemon index.js",
-    "dev": "concurrently \"npx tsc --watch \"  \"nodemon -q dist/index.js \"",
+    "dev": "concurrently \"npx tsc --watch \" \"npm run swagger\"  \"nodemon -q dist/index.js \"",
     "test": "jest",
     "serve:coverage": "npm run test && cd coverage/lcov-report && npx serve",
     "build": "npx webpack --mode development",
