@@ -1,5 +1,8 @@
 import express, { Express, Request, Response } from 'express';
 
+//Swagger
+import swaggerUi from 'swagger-ui-express';
+
 // Security
 import cors from 'cors';
 import helmet from 'helmet';
@@ -9,9 +12,22 @@ import helmet from 'helmet';
 // Root Router
 // * Here we are using /routes/index.ts (it is implicit when it has an "index" file)
 import rootRouter from '../routes';
+import mongoose from 'mongoose';
 
 // * Create Express App
 const server: Express = express();
+
+// * Swagger Config and route
+server.use(
+  '/docs',
+  swaggerUi.serve,
+  swaggerUi.setup(undefined, {
+    swaggerOptions: {
+      url: '/swagger.json',
+      explorer: true,
+    },
+  })
+);
 
 // * Define SERVER to use "/api" and use rootRouter from "index.ts" in routes
 // From this point onover: http://localhost:8000/api/...
@@ -21,6 +37,12 @@ server.use('/api', rootRouter);
 server.use(express.static('public'));
 
 // TODO Mongoose Connection
+mongoose
+  .connect('mongodb://0.0.0.0:27017/OB_MERN')
+  .then((x) =>
+    console.log(`Connected to Mongo! Database name: "${x.connections[0].name}"`)
+  )
+  .catch((err) => console.error('Error connecting to mongo', err));
 
 // * Security Config
 server.use(helmet());

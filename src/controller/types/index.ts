@@ -5,6 +5,9 @@ export type BasicResponse = {
   message: string;
 };
 
+/**
+ * JSON response for ByeController
+ */
 export type ByeResponse = {
   message: string;
   Date: string;
