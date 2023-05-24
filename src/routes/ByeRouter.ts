@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { ByeController } from '../controller/ByeController';
+import { ByeController } from '../controller/bye.controller';
 import { LogInfo } from '../utils/logger';
 
 // Router from express

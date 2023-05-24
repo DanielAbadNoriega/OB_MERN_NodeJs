@@ -7,22 +7,45 @@ import { LogError, LogSuccess } from '../../utils/logger';
 /**
  * Method to obtain all Users from Collection 'Users' in Mongo Server
  */
-export const GetAllUsers = async (): Promise<any[] | undefined> => {
+export const getAllUsers = async (): Promise<any[] | undefined> => {
   try {
     let userModel = userEntity();
+    LogSuccess(`[ ORM / GET - ALL USERS ] Success.`);
 
-    LogSuccess(`[ ORM / GET - ALL USERS ]: Success.`);
     // Search all users
-    return await userModel.find({ isDelete: false });
+    return await userModel.find();
   } catch (error) {
     LogError(`[ ORM / GET - ALL USERS ] Error: ${error}`);
   }
 };
 
-
-// TODO: 
 // - get User By ID
-// - get User By Email
+export const getUserByID = async (id: string): Promise<any | undefined> => {
+  try {
+    let userModel = userEntity();
+    LogSuccess(`[ ORM / GET USER (ID) ] Success.`);
+
+    // Search User By iD
+    return await userModel.findById(id);
+  } catch (error) {
+    LogError(`[ ORM - GET USER (ID) ] Error: ${error}`);
+  }
+};
+
 // - Delete User By ID
+export const deleteUserByID = async (id: string): Promise<any | undefined> => {
+  try {
+    let userModel = userEntity();
+    LogSuccess(`[ ORM / DELETE USER (ID) ] Success.`);
+
+    // Search User By iD
+    return await userModel.findByIdAndDelete(id);
+  } catch (error) {
+    LogError(`[ ORM - DELETE USER (ID) ] Error: ${error}`);
+  }
+};
+
+// TODO:
+// - get User By Email
 // - Create New User
 // - Update User By ID

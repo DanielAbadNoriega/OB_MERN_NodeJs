@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { HelloController } from "../controller/HelloController";
+import { HelloController } from "../controller/hello.controller";
 import { LogInfo } from "../utils/logger";
 
 // Router from express

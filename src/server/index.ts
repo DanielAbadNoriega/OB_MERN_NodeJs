@@ -38,7 +38,7 @@ server.use(express.static('public'));
 
 // TODO Mongoose Connection
 mongoose
-  .connect('mongodb://0.0.0.0:27017/OB_MERN')
+  .connect('mongodb://127.0.0.1:27017/OB_MERN')
   .then((x) =>
     console.log(`Connected to Mongo! Database name: "${x.connections[0].name}"`)
   )
@@ -49,6 +49,7 @@ server.use(helmet());
 server.use(cors());
 
 // * Content Type Config
+// With this, we can use req.body
 server.use(express.urlencoded({ extended: true, limit: '50mb' }));
 server.use(express.json({ limit: '50mb' }));
 
