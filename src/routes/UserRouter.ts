@@ -20,6 +20,7 @@ userRouter
     // Send to the client the response
     return res.send(response);
   })
+  // DELETE
   .delete(async (req: Request, res: Response) => {
     // Obtain Query Param (ID)
     let id: any = req?.query?.id;
@@ -30,6 +31,25 @@ userRouter
     const response = await controller.deleteUser(id);
     // Send to the client the response
     return res.send(response);
+  })
+  // CREATE
+  .post(async (req: Request, res: Response) => {
+
+    let name: any = req?.query?.name;
+    let email: any = req?.query?.email;
+    let age: any = req?.query?.age;
+
+    let user = {
+      name: name || 'default',
+      email: email || 'default@mail.com',
+      age: age || 18,
+    };
+
+    LogInfo(`[ UserRouter - CREATE USER ]`);
+    const controller: UserController = new UserController();
+
+    const response = await controller.createUser(user);
+    res.send(response);
   });
 
 export default userRouter;
