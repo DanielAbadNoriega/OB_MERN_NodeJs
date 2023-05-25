@@ -17,4 +17,7 @@ export interface IUsersController {
 
   // CREATE NEW USER
   createUser(user: any): Promise<any>;
+
+  // UPDATE USER by ID
+  updateUserByID(id: string, user: any): Promise<any>;
 }

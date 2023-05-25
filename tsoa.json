@@ -1,8 +1,18 @@
 {
   "entryFile": "index.ts",
   "noImplicitAdditionalProperties": "throw-on-extras",
-  "controllerPathGlobes": "src/**/*Controller.ts",
+  "controllerPathGlobes": ["src/**/*controller.ts"],
   "spec": {
+    "tags": [
+      {
+        "name": "UsersController",
+        "description": "Operations about users",
+        "externalDocs": {
+          "description": "Find out more about users",
+          "url": "http://localhost:8000/docs/#/UsersController"
+        }
+      }
+    ],
     "outputDirectory": "public",
     "specVersion": 3
   }

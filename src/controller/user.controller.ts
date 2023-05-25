@@ -1,4 +1,4 @@
-import { Delete, Get, Post, Query, Route, Tags } from 'tsoa';
+import { Delete, Get, Post, Put, Query, Route, Tags } from 'tsoa';
 import { IUsersController } from './interfaces';
 import { LogError, LogSuccess, LogWarning } from '../utils/logger';
 
@@ -8,15 +8,16 @@ import {
   deleteUserByID,
   getAllUsers,
   getUserByID,
+  updateUserByID,
 } from '../domain/orm/User.orm';
 
 @Route('/api/users')
 @Tags('UsersController')
 export class UserController implements IUsersController {
   /**
-   * Endpoint to retrieve the Users in the collection 'Users' of DB
-   * @param {string} id Id of user to retrieve (optional)
-   * @returns All user or user found by ID
+   * Endpoint to retrieve the Users in the collection 'Users' of DB.
+   * @param {string} id Id of user to retrieve (optional).
+   * @returns All user or user found by ID.
    */
   @Get('/')
   public async getUsers(@Query() id?: string): Promise<any> {
@@ -34,8 +35,8 @@ export class UserController implements IUsersController {
   }
 
   /**
-   * Endpoint to DELETE user in the collection 'Users' of DB
-   * @param {string} id Id of user to DELETE (optional)
+   * Endpoint to DELETE user in the collection 'Users' of DB.
+   * @param {string} id Id of user to DELETE (optional).
    * @returns message informing if deletion is success.
    */
   @Delete('/')
@@ -62,7 +63,12 @@ export class UserController implements IUsersController {
     return response;
   }
 
-  @Post('/')
+  /**
+   * Endpoint to CREATE user in the collection 'Users' of DB.
+   * @param user JSON with properties of new User.
+   * @returns message informing if creating user is success.
+   */
+  @Post()
   public async createUser(user: any): Promise<any> {
     let response: any = '';
 
@@ -72,6 +78,38 @@ export class UserController implements IUsersController {
         message: `CREATE USER successfully: ${user.name}`,
       };
     });
+
+    return response;
+  }
+
+  /**
+   * Endpoint to UPDATE user in the collection 'Users' of DB.
+   * @param user JSON with new properties of User filtered by ID.
+   * @param {string} id id from user to update.
+   * @returns message informing if update is success.
+   */
+  
+  public async updateUserByID(@Query() id: string, user: any): Promise<any> {
+    let response: any = '';
+
+    if (id) {
+      LogSuccess(
+        `[ /api/users - UsersController ] UPDATE USER ID ${id}: ${user}`
+      );
+      await updateUserByID(id, user).then(
+        (r) =>
+          (response = {
+            message: `User ${user.name} with id ${id} successfully updated.`,
+          })
+      );
+    } else {
+      LogWarning(
+        `[ /api/users - UsersController ] UPDATING USER By ID: need an ID to Update User.`
+      );
+      response = {
+        message: 'UPDATING USER By ID: need an ID to Update User.',
+      };
+    }
 
     return response;
   }
