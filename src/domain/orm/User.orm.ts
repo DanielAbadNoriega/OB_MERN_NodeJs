@@ -1,6 +1,18 @@
 import { userEntity } from '../entities/User.entity';
-
 import { LogError, LogSuccess } from '../../utils/logger';
+import { IUser } from '../interfaces/IUser.interface';
+import { IAuth } from '../interfaces/IAuth.interface';
+
+// BCRYPT for passwords
+import bcrypt from 'bcrypt';
+
+// JWT
+import jwt from 'jsonwebtoken';
+
+import dotenv from 'dotenv';
+
+// Configuration the .env file
+dotenv.config();
 
 // CRUD
 
@@ -73,5 +85,60 @@ export const updateUserByID = async (
   }
 };
 
-// TODO:
-// - get User By Email
+// - REGISTER User
+export const registerUser = async (user: IUser): Promise<any | undefined> => {
+  try {
+    let userModel = userEntity();
+    LogSuccess(`[ ORM / POST - REGISTER ] Success.`);
+
+    // Register User
+    return await userModel.find();
+  } catch (error) {
+    LogError(`[ ORM / POST - REGISTER ] Error: ${error}`);
+  }
+};
+
+// - LOGIN User
+export const loginUser = async (auth: IAuth): Promise<any | undefined> => {
+  // TODO: NOT IMPLEMENTED
+  try {
+    let userModel = userEntity();
+    LogSuccess(`[ ORM / POST - LOGIN ] Success.`);
+
+    // FIND user by mail
+    return await userModel.findOne(
+      { mail: auth.mail },
+      (err: any, user: IUser) => {
+        if (err) {
+          // TODO: return ERROR --> ERROR while searching(500)
+        }
+
+        if (!user) {
+          // TODO: return ERROR --> ERROR USER NOT FOUND(404)
+        }
+
+        // use Bcrypt to Compare Password
+        let validPassword = bcrypt.compareSync(auth.password, user.password);
+
+        if (!validPassword) {
+          // TODO --> NOT AUTHORISED (401)
+        }
+        const secretWord: string = process.env.SECRETTEXT || 'MYSECRET';
+        // Create JWT
+        // TODO: Secret must be in .env
+        let token = jwt.sign({ mail: user.mail }, secretWord, {
+          expiresIn: '2h',
+        });
+
+        return token;
+      }
+    );
+  } catch (error) {
+    LogError(`[ ORM / POST - LOGIN ] Error: ${error}`);
+  }
+};
+
+// -LOGOUT User
+export const logoutUser = async (): Promise<any | undefined> => {
+  // TODO: NOT IMPLEMENTED
+};

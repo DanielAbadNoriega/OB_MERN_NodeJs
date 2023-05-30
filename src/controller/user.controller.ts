@@ -30,7 +30,7 @@ export class UserController implements IUsersController {
       LogSuccess('[ /api/users - UsersController ]  GET ALL USERS Request');
       response = await getAllUsers();
     }
-    console.log(response);
+    // console.log(response);
     return response;
   }
 
