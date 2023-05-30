@@ -282,6 +282,8 @@ $ npm i -D mongoose
 
 ```
 
+<!-- DOCUMENTATION -->
+
 - **@types/swagger-jsdoc:** This package contains type definitions for swagger-jsdoc. Documentations with swagger
 
 ```
@@ -319,6 +321,54 @@ $ npm i --save swagger-ui-express
 ```
 
 $ npm i tsoa
+
+```
+
+- **bcrypt:** A library to help you hash passwords
+
+```
+
+$ npm i bcrypt
+
+```
+
+- **@types/bcrypt:** the type definitions
+
+```
+
+$ npm i -D @types/bcrypt
+
+```
+
+- **bcryptjs:** Optimized bcrypt in JavaScript with zero dependencies. Compatible to the C++ bcrypt binding on node.js and also working in the browser.
+
+```
+
+$ npm i bcryptjs
+
+```
+
+- **@types/bcryptjs:** the type definitions.
+
+```
+
+$ npm i -D @types/bcryptjs
+
+```
+
+- **jsonwebtoken:** An implementation of JSON Web Tokens.
+
+```
+
+$ npm i jsonwebtoken
+
+```
+
+- **@types/jsonwebtoken:** the type definitions.
+
+```
+
+$ npm i -D @types/jsonwebtoken
 
 ```
 

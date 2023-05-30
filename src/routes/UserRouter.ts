@@ -18,7 +18,7 @@ userRouter
     // Obtain Response
     const response = await controller.getUsers(id);
     // Send to the client the response
-    return res.send(response);
+    return res.status(200).send(response);
   })
   // DELETE
   .delete(async (req: Request, res: Response) => {
@@ -30,7 +30,7 @@ userRouter
     // Obtain Response
     const response = await controller.deleteUser(id);
     // Send to the client the response
-    return res.send(response);
+    return res.status(200).send(response);
   })
   // CREATE
   .post(async (req: Request, res: Response) => {
@@ -48,7 +48,7 @@ userRouter
     const controller: UserController = new UserController();
 
     const response = await controller.createUser(user);
-    res.send(response);
+    res.status(201).send(response);
   })
   .put(async (req: Request, res: Response) => {
     // Obtain Query Param (ID)
@@ -70,7 +70,7 @@ userRouter
     // Obtain Response
     const response = await controller.updateUserByID(id, user);
     // Send to the client the response
-    res.send(response);
+    res.status(200).send(response);
   });
 
 export default userRouter;

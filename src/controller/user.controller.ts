@@ -48,6 +48,7 @@ export class UserController implements IUsersController {
       await deleteUserByID(id).then(
         (res) =>
           (response = {
+            status : 204,
             message: `DELETE USER By ID: ${id} done successfully`,
           })
       );
@@ -56,6 +57,7 @@ export class UserController implements IUsersController {
         `[ /api/users - UsersController ] DELETE USER By ID: need an ID to Delete User.`
       );
       response = {
+        status: 400,
         message: 'DELETE USER By ID: need an ID to Delete User.',
       };
     }
@@ -68,15 +70,18 @@ export class UserController implements IUsersController {
    * @param user JSON with properties of new User.
    * @returns message informing if creating user is success.
    */
-  @Post()
+  // @Post()
   public async createUser(user: any): Promise<any> {
     let response: any = '';
 
     await createUser(user).then((r) => {
-      LogSuccess(`[ /api/users - UsersController ] CREATE USER: ${user}`);
+      LogSuccess(`[ /api/users - UsersController ] CREATE USER: ${JSON.stringify(user)}`);
       response = {
         message: `CREATE USER successfully: ${user.name}`,
       };
+    }).catch(e => {
+      LogError(`[ /api/users - UsersController ] ERROR CREATE USER: ${e}`)
+      LogError(`[ /api/users - UsersController ] ERROR CREATE USER: ${JSON.stringify(user)}`)
     });
 
     return response;
@@ -88,7 +93,6 @@ export class UserController implements IUsersController {
    * @param {string} id id from user to update.
    * @returns message informing if update is success.
    */
-  
   public async updateUserByID(@Query() id: string, user: any): Promise<any> {
     let response: any = '';
 
@@ -99,6 +103,7 @@ export class UserController implements IUsersController {
       await updateUserByID(id, user).then(
         (r) =>
           (response = {
+            status: 204,
             message: `User ${user.name} with id ${id} successfully updated.`,
           })
       );
@@ -107,6 +112,7 @@ export class UserController implements IUsersController {
         `[ /api/users - UsersController ] UPDATING USER By ID: need an ID to Update User.`
       );
       response = {
+        status: 400,
         message: 'UPDATING USER By ID: need an ID to Update User.',
       };
     }
