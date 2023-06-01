@@ -35,6 +35,6 @@ server.use('/hello', helloRouter); // http://localhost:8000/api/hello --> helloR
 server.use('/goodbye', byeRouter); // http://localhost:8000/api/goodbye --> byeRouter
 server.use('/users', userRouter); // http://localhost:8000/api/users --> userRouter
 // Auth routes
-server.use('/auth', authRouter); // http://localhost:8000/api/users --> userRouter
+server.use('/auth', authRouter); // http://localhost:8000/api/auth --> userRouter
 
 export default server;

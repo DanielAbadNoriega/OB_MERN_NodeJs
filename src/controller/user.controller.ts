@@ -48,7 +48,7 @@ export class UserController implements IUsersController {
       await deleteUserByID(id).then(
         (res) =>
           (response = {
-            status : 204,
+            status: 204,
             message: `DELETE USER By ID: ${id} done successfully`,
           })
       );
@@ -74,15 +74,25 @@ export class UserController implements IUsersController {
   public async createUser(user: any): Promise<any> {
     let response: any = '';
 
-    await createUser(user).then((r) => {
-      LogSuccess(`[ /api/users - UsersController ] CREATE USER: ${JSON.stringify(user)}`);
-      response = {
-        message: `CREATE USER successfully: ${user.name}`,
-      };
-    }).catch(e => {
-      LogError(`[ /api/users - UsersController ] ERROR CREATE USER: ${e}`)
-      LogError(`[ /api/users - UsersController ] ERROR CREATE USER: ${JSON.stringify(user)}`)
-    });
+    await createUser(user)
+      .then((r) => {
+        LogSuccess(
+          `[ /api/users - UsersController ] CREATE USER: ${JSON.stringify(
+            user
+          )}`
+        );
+        response = {
+          message: `CREATE USER successfully: ${user.name}`,
+        };
+      })
+      .catch((e) => {
+        LogError(`[ /api/users - UsersController ] ERROR CREATE USER: ${e}`);
+        LogError(
+          `[ /api/users - UsersController ] ERROR CREATE USER: ${JSON.stringify(
+            user
+          )}`
+        );
+      });
 
     return response;
   }

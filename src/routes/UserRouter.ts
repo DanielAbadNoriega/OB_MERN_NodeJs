@@ -2,6 +2,11 @@ import express, { Request, Response } from 'express';
 import { UserController } from '../controller/user.controller';
 import { LogInfo } from '../utils/logger';
 
+// Body Parser to read BODY from requests
+import bodyParser from 'body-parser';
+
+let jsonParser = bodyParser.json();
+
 // Router from express
 let userRouter = express.Router();
 
@@ -33,7 +38,8 @@ userRouter
     return res.status(200).send(response);
   })
   // CREATE
-  .post(async (req: Request, res: Response) => {
+  // * jsonParser let us use body request.
+  .post(jsonParser, async (req: Request, res: Response) => {
     let name: any = req?.query?.name;
     let mail: any = req?.query?.mail;
     let age: any = req?.query?.age;
@@ -43,6 +49,9 @@ userRouter
       mail: mail || 'default@mail.com',
       age: age || 18,
     };
+
+    let name2: any = req?.body?.name;
+    LogInfo(`### NAME in BODY: ${name2}`);
 
     LogInfo(`[ UserRouter - CREATE USER ]`);
     const controller: UserController = new UserController();

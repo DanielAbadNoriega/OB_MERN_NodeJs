@@ -92,7 +92,7 @@ export const registerUser = async (user: IUser): Promise<any | undefined> => {
     LogSuccess(`[ ORM / POST - REGISTER ] Success.`);
 
     // Register User
-    return await userModel.find();
+    return await userModel.create(user);
   } catch (error) {
     LogError(`[ ORM / POST - REGISTER ] Error: ${error}`);
   }
@@ -123,7 +123,7 @@ export const loginUser = async (auth: IAuth): Promise<any | undefined> => {
         if (!validPassword) {
           // TODO --> NOT AUTHORISED (401)
         }
-        const secretWord: string = process.env.SECRETTEXT || 'MYSECRET';
+        const secretWord: string = process.env.SECRETKEY || 'MYSECRET';
         // Create JWT
         // TODO: Secret must be in .env
         let token = jwt.sign({ mail: user.mail }, secretWord, {

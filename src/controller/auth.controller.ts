@@ -6,21 +6,27 @@ import { IAuth } from '../domain/interfaces/IAuth.interface';
 
 // ORM imports
 import { registerUser, loginUser, logoutUser } from '../domain/orm/User.orm';
+import { AuthResponse, ErrorResponse } from './types';
 
-@Route('/api/auth')
 @Tags('AuthController')
+@Route('/api/auth')
 export class AuthController implements IAuthController {
   @Post('/register')
   public async registerUser(user: IUser): Promise<any> {
     let response: any = '';
 
     if (user) {
-      response = await registerUser(user)
+      LogSuccess(`[/api/auth/register] Register New User: ${user.mail} `);
+      /*       await registerUser(user).then((r) => {
+        LogSuccess(`[/api/auth/register] Created User: ${user.mail} `);
+        response = {
+            message: `User created successfully: ${user.name}`
+        }
+    }); */
+      await registerUser(user)
         .then((r) => {
           LogSuccess(
-            `[ /api/auth/register - AuthController ]  Register user: ${JSON.stringify(
-              user
-            )}`
+            `[ /api/auth/register - AuthController ]  Register user: ${user.mail}`
           );
           response = {
             message: `USER REGISTERED successfully: ${user.name}`,
@@ -51,10 +57,11 @@ export class AuthController implements IAuthController {
 
   @Post('/login')
   public async loginUser(auth: IAuth): Promise<any> {
-    let response: any = '';
+
+    let response: AuthResponse | ErrorResponse | undefined;
 
     if (auth) {
-      response = await loginUser(auth)
+     await loginUser(auth)
         .then((r) => {
           LogSuccess(
             `[ /api/auth/register - AuthController ] LOGIN: ${JSON.stringify(
@@ -81,8 +88,8 @@ export class AuthController implements IAuthController {
         `[ /api/auth/login - AuthController ] LOGIN: needs Auth Entity (email && password) to login.`
       );
       response = {
-        status: 400,
-        message: 'Need a need a email or password to login.',
+        error: '[AUTH ERROR]: Email & Password are needed',
+        message: 'Please, provide a email && password to logi',
       };
     }
     // console.log(response);
