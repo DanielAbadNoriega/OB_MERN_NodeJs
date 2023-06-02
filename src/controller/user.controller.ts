@@ -29,6 +29,7 @@ export class UserController implements IUsersController {
     } else {
       LogSuccess('[ /api/users - UsersController ]  GET ALL USERS Request');
       response = await getAllUsers();
+      // TODO: remove passwords from response
     }
     // console.log(response);
     return response;
@@ -71,7 +72,7 @@ export class UserController implements IUsersController {
    * @returns message informing if creating user is success.
    */
   // @Post()
-  public async createUser(user: any): Promise<any> {
+/*   public async createUser(user: any): Promise<any> {
     let response: any = '';
 
     await createUser(user)
@@ -95,7 +96,7 @@ export class UserController implements IUsersController {
       });
 
     return response;
-  }
+  } */
 
   /**
    * Endpoint to UPDATE user in the collection 'Users' of DB.

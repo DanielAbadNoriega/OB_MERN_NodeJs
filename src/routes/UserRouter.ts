@@ -37,28 +37,7 @@ userRouter
     // Send to the client the response
     return res.status(200).send(response);
   })
-  // CREATE
-  // * jsonParser let us use body request.
-  .post(jsonParser, async (req: Request, res: Response) => {
-    let name: any = req?.query?.name;
-    let mail: any = req?.query?.mail;
-    let age: any = req?.query?.age;
-
-    let user = {
-      name: name || 'default',
-      mail: mail || 'default@mail.com',
-      age: age || 18,
-    };
-
-    let name2: any = req?.body?.name;
-    LogInfo(`### NAME in BODY: ${name2}`);
-
-    LogInfo(`[ UserRouter - CREATE USER ]`);
-    const controller: UserController = new UserController();
-
-    const response = await controller.createUser(user);
-    res.status(201).send(response);
-  })
+  // UPDATE
   .put(async (req: Request, res: Response) => {
     // Obtain Query Param (ID)
     let id: any = req?.query?.id;
@@ -81,5 +60,27 @@ userRouter
     // Send to the client the response
     res.status(200).send(response);
   });
+// CREATE
+// * jsonParser let us use body request.
+/* .post(jsonParser, async (req: Request, res: Response) => {
+    let name: any = req?.query?.name;
+    let mail: any = req?.query?.mail;
+    let age: any = req?.query?.age;
+
+    let user = {
+      name: name || 'default',
+      mail: mail || 'default@mail.com',
+      age: age || 18,
+    };
+
+    let name2: any = req?.body?.name;
+    LogInfo(`### NAME in BODY: ${name2}`);
+
+    LogInfo(`[ UserRouter - CREATE USER ]`);
+    const controller: UserController = new UserController();
+
+    const response = await controller.createUser(user);
+    res.status(201).send(response);
+  }) */
 
 export default userRouter;

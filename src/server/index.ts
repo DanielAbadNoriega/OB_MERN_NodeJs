@@ -39,11 +39,8 @@ server.use(express.static('public'));
 // TODO Mongoose Connection
 mongoose
   .connect('mongodb://127.0.0.1:27017/OB_MERN')
-  .then((x) =>
-    console.log(`Connected to Mongo! Database name: "${x.connections[0].name}"`)
-  )
+  .then((x) => console.log(`Connected to Mongo! Database name: "${x.connections[0].name}"`))
   .catch((err) => console.error('Error connecting to mongo', err));
-
 // * Security Config
 server.use(helmet());
 server.use(cors());

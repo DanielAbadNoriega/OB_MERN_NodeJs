@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { AuthController } from '../controller/auth.controller';
 import { IUser } from '../domain/interfaces/IUser.interface';
-import { IAuth } from '@/domain/interfaces/IAuth.interface';
+import { IAuth } from '../domain/interfaces/IAuth.interface';
 
 // BCRYPT for passwords
 import bcrypt from 'bcrypt';
@@ -11,6 +11,7 @@ import { verifyToken } from '../middlewares/verifyToken.middleware';
 
 // Body Parser (Read JSON from Body in Requests)
 import bodyParser from 'body-parser';
+import { LogInfo } from '../utils/logger';
 
 // Middleware to read JSON in Body
 let jsonParser = bodyParser.json();
@@ -67,6 +68,12 @@ authRouter
         mail,
         password,
       };
+      LogInfo(
+        `[ LOGIN - ROUTER ] User: ${JSON.stringify({
+          mail: auth.mail,
+          password: auth.password,
+        })}`
+      );
 
       //Obtain response
       const response: any = await controller.loginUser(auth);
@@ -75,5 +82,26 @@ authRouter
       return res.status(200).send(response);
     }
   });
+
+// Route Protected by VERIFY TOKEN Middleware
+authRouter.route('/me').get(verifyToken, async (req: Request, res: Response) => {
+  // Obtain the ID of user to check it's data
+  let id: any = req?.query?.id;
+
+  if (id) {
+    // Controller: Auth Controller
+    const controller: AuthController = new AuthController();
+
+    // Obtain response from Controller
+    let response: any = await controller.userData(id);
+
+    // If user is authorised:
+    return res.status(200).send(response);
+  } else {
+    return res.status(401).send({
+      message: 'You are not authorised to perform this action',
+    });
+  }
+});
 
 export default authRouter;

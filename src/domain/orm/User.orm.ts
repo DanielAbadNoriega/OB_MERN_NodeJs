@@ -14,6 +14,9 @@ import dotenv from 'dotenv';
 // Configuration the .env file
 dotenv.config();
 
+// Obtain Secret key to generate JWT
+const secret = process.env.SECRETKEY || 'MYSECRETKEY';
+
 // CRUD
 
 /**
@@ -71,10 +74,7 @@ export const createUser = async (user: any): Promise<any | undefined> => {
 };
 
 // - UPDATE User By ID
-export const updateUserByID = async (
-  id: string,
-  user: any
-): Promise<any | undefined> => {
+export const updateUserByID = async (id: string, user: any): Promise<any | undefined> => {
   try {
     let userModel = userEntity();
 
@@ -100,39 +100,40 @@ export const registerUser = async (user: IUser): Promise<any | undefined> => {
 
 // - LOGIN User
 export const loginUser = async (auth: IAuth): Promise<any | undefined> => {
-  // TODO: NOT IMPLEMENTED
   try {
     let userModel = userEntity();
-    LogSuccess(`[ ORM / POST - LOGIN ] Success.`);
 
-    // FIND user by mail
-    return await userModel.findOne(
-      { mail: auth.mail },
-      (err: any, user: IUser) => {
-        if (err) {
-          // TODO: return ERROR --> ERROR while searching(500)
-        }
+    let userFound: IUser | undefined = undefined;
+    let token = undefined;
 
-        if (!user) {
-          // TODO: return ERROR --> ERROR USER NOT FOUND(404)
-        }
+    // Check if user exists by Unique Email
+    await userModel
+      .findOne({ mail: auth.mail })
+      .then((user: IUser) => {
+        userFound = user;
+      })
+      .catch((error) => {
+        console.error(`[ERROR Authentication in ORM]: User Not Found`);
+        throw new Error(`[ERROR Authentication in ORM]: User Not Found: ${error}`);
+      });
 
-        // use Bcrypt to Compare Password
-        let validPassword = bcrypt.compareSync(auth.password, user.password);
+    // Check if Password is Valid (compare with bcrypt)
+    let validPassword = bcrypt.compareSync(auth.password, userFound!.password);
 
-        if (!validPassword) {
-          // TODO --> NOT AUTHORISED (401)
-        }
-        const secretWord: string = process.env.SECRETKEY || 'MYSECRET';
-        // Create JWT
-        // TODO: Secret must be in .env
-        let token = jwt.sign({ mail: user.mail }, secretWord, {
-          expiresIn: '2h',
-        });
+    if (!validPassword) {
+      console.error(`[ERROR Authentication in ORM]: Password Not Valid`);
+      throw new Error(`[ERROR Authentication in ORM]: Password Not Valid`);
+    }
 
-        return token;
-      }
-    );
+    // Generate our JWT
+    token = jwt.sign({ email: userFound!.mail }, secret, {
+      expiresIn: '2h',
+    });
+
+    return {
+      user: userFound,
+      token: token,
+    };
   } catch (error) {
     LogError(`[ ORM / POST - LOGIN ] Error: ${error}`);
   }
