@@ -21,3 +21,10 @@ export type ErrorResponse = {
   message: string;
 };
 
+/**
+ * Auth JSON response for Controllers
+ */
+export type AuthResponse = {
+  message: string,
+  token: string
+}

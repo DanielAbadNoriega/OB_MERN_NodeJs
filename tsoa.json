@@ -1,7 +1,7 @@
 {
   "entryFile": "index.ts",
   "noImplicitAdditionalProperties": "throw-on-extras",
-  "controllerPathGlobes": ["src/**/*controller.ts"],
+  "controllerPathGlobes": ["src/**/*.controller.ts"],
   "spec": {
     "tags": [
       {

@@ -11,17 +11,16 @@ export interface IByeController {
 
 export interface IUsersController {
   // READ ALL USERS from Data Base || GET USER By ID
-  getUsers(id?: string): Promise<any>;
+  getUsers(page: number, limit: number, id?: string): Promise<any>;
 
   // DELETE USER by ID
   deleteUser(id?: string): Promise<any>;
 
   // CREATE NEW USER
-  createUser(user: any): Promise<any>;
+  // createUser(user: any): Promise<any>;
 
   // UPDATE USER by ID
   updateUserByID(id: string, user: any): Promise<any>;
-
 }
 
 export interface IAuthController {
@@ -29,4 +28,12 @@ export interface IAuthController {
   registerUser(user: IUser): Promise<any>;
   // login user
   loginUser(auth: any): Promise<any>;
+}
+
+export interface IKataController {
+  // READ ALL KATAS
+  getKatas(): Promise<any>;
+
+  // Filter Katas by Level
+  getKatasByLevel(): Promise<any>;
 }

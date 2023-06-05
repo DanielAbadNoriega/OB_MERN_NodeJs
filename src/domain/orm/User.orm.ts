@@ -10,24 +10,46 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 import dotenv from 'dotenv';
+import { UserResponse } from '../types/UsersResponse.type';
 
 // Configuration the .env file
 dotenv.config();
+
+// Obtain Secret key to generate JWT
+const secret = process.env.SECRETKEY || 'MYSECRETKEY';
 
 // CRUD
 
 /**
  * Method to obtain all Users from Collection 'Users' in Mongo Server
  */
-export const getAllUsers = async (): Promise<any[] | undefined> => {
+export const getAllUsers = async (page: number, limit: number): Promise<any[] | undefined> => {
   try {
-    let userModel = userEntity();
     LogSuccess(`[ ORM / GET - ALL USERS ] Success.`);
 
-    // Search all users
-    return await userModel.find();
+    let userModel = userEntity();
+
+    let response: any = {};
+
+    // Search all users (using pagination)
+    await userModel
+      .find()
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .exec()
+      .then((users: IUser[]) => {
+        response.users = users;
+      });
+
+    // Count total documents in collection "Users"
+    await userModel.countDocuments().then((total: number) => {
+      response.totalPages = Math.ceil(total / limit);
+      response.currentPage = page;
+    });
+
+    return response;
   } catch (error) {
-    LogError(`[ ORM / GET - ALL USERS ] Error: ${error}`);
+    LogError(`[ USER ORM / GET - ALL USERS ] Error: ${error}`);
   }
 };
 
@@ -35,12 +57,12 @@ export const getAllUsers = async (): Promise<any[] | undefined> => {
 export const getUserByID = async (id: string): Promise<any | undefined> => {
   try {
     let userModel = userEntity();
-    LogSuccess(`[ ORM / GET USER (ID) ] Success.`);
+    LogSuccess(`[ USER ORM / GET USER (ID) ] Success.`);
 
     // Search User By iD
-    return await userModel.findById(id);
+    return await userModel.findById(id).select('name email age katas');
   } catch (error) {
-    LogError(`[ ORM - GET USER (ID) ] Error: ${error}`);
+    LogError(`[ USER ORM - GET USER (ID) ] Error: ${error}`);
   }
 };
 
@@ -48,12 +70,12 @@ export const getUserByID = async (id: string): Promise<any | undefined> => {
 export const deleteUserByID = async (id: string): Promise<any | undefined> => {
   try {
     let userModel = userEntity();
-    LogSuccess(`[ ORM / DELETE USER (ID) ] Success.`);
+    LogSuccess(`[ USER ORM / DELETE USER (ID) ] Success.`);
 
     // DELETE User By iD
     return await userModel.findByIdAndDelete(id);
   } catch (error) {
-    LogError(`[ ORM - DELETE USER (ID) ] Error: ${error}`);
+    LogError(`[ USER ORM - DELETE USER (ID) ] Error: ${error}`);
   }
 };
 
@@ -61,27 +83,24 @@ export const deleteUserByID = async (id: string): Promise<any | undefined> => {
 export const createUser = async (user: any): Promise<any | undefined> => {
   try {
     let userModel = userEntity();
-    LogSuccess(`[ ORM / CREATE USER ] Success.`);
+    LogSuccess(`[ USER ORM / CREATE USER ] Success.`);
 
     // CREATE New User
     return await userModel.create(user);
   } catch (error) {
-    LogError(`[ ORM - CREATING USER ] Error: ${error}`);
+    LogError(`[ USER ORM - CREATING USER ] Error: ${error}`);
   }
 };
 
 // - UPDATE User By ID
-export const updateUserByID = async (
-  id: string,
-  user: any
-): Promise<any | undefined> => {
+export const updateUserByID = async (id: string, user: any): Promise<any | undefined> => {
   try {
     let userModel = userEntity();
 
     // UPDATE User
     return await userModel.findByIdAndUpdate(id, user);
   } catch (error) {
-    LogError(`[ ORM - UPDATING USER ] Error updating user ${id}: ${error}`);
+    LogError(`[ USER ORM - UPDATING USER ] Error updating user ${id}: ${error}`);
   }
 };
 
@@ -89,52 +108,53 @@ export const updateUserByID = async (
 export const registerUser = async (user: IUser): Promise<any | undefined> => {
   try {
     let userModel = userEntity();
-    LogSuccess(`[ ORM / POST - REGISTER ] Success.`);
+    LogSuccess(`[ USER ORM / POST - REGISTER ] Success.`);
 
     // Register User
-    return await userModel.find();
+    return await userModel.create(user);
   } catch (error) {
-    LogError(`[ ORM / POST - REGISTER ] Error: ${error}`);
+    LogError(`[ USER ORM / POST - REGISTER ] Error: ${error}`);
   }
 };
 
 // - LOGIN User
 export const loginUser = async (auth: IAuth): Promise<any | undefined> => {
-  // TODO: NOT IMPLEMENTED
   try {
     let userModel = userEntity();
-    LogSuccess(`[ ORM / POST - LOGIN ] Success.`);
 
-    // FIND user by mail
-    return await userModel.findOne(
-      { mail: auth.mail },
-      (err: any, user: IUser) => {
-        if (err) {
-          // TODO: return ERROR --> ERROR while searching(500)
-        }
+    let userFound: IUser | undefined = undefined;
+    let token = undefined;
 
-        if (!user) {
-          // TODO: return ERROR --> ERROR USER NOT FOUND(404)
-        }
+    // Check if user exists by Unique Email
+    await userModel
+      .findOne({ mail: auth.mail })
+      .then((user: IUser) => {
+        userFound = user;
+      })
+      .catch((error) => {
+        console.error(`[ERROR Authentication in USER ORM]: User Not Found`);
+        throw new Error(`[ERROR Authentication in USER ORM]: User Not Found: ${error}`);
+      });
 
-        // use Bcrypt to Compare Password
-        let validPassword = bcrypt.compareSync(auth.password, user.password);
+    // Check if Password is Valid (compare with bcrypt)
+    let validPassword = bcrypt.compareSync(auth.password, userFound!.password);
 
-        if (!validPassword) {
-          // TODO --> NOT AUTHORISED (401)
-        }
-        const secretWord: string = process.env.SECRETTEXT || 'MYSECRET';
-        // Create JWT
-        // TODO: Secret must be in .env
-        let token = jwt.sign({ mail: user.mail }, secretWord, {
-          expiresIn: '2h',
-        });
+    if (!validPassword) {
+      console.error(`[ERROR Authentication in USER ORM]: Password Not Valid`);
+      throw new Error(`[ERROR Authentication in USER ORM]: Password Not Valid`);
+    }
 
-        return token;
-      }
-    );
+    // Generate our JWT
+    token = jwt.sign({ email: userFound!.mail }, secret, {
+      expiresIn: '2h',
+    });
+
+    return {
+      user: userFound,
+      token: token,
+    };
   } catch (error) {
-    LogError(`[ ORM / POST - LOGIN ] Error: ${error}`);
+    LogError(`[ USER ORM / POST - LOGIN ] Error: ${error}`);
   }
 };
 

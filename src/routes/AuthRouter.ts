@@ -1,19 +1,29 @@
 import express, { Request, Response } from 'express';
 import { AuthController } from '../controller/auth.controller';
 import { IUser } from '../domain/interfaces/IUser.interface';
-import { IAuth } from '@/domain/interfaces/IAuth.interface';
+import { IAuth } from '../domain/interfaces/IAuth.interface';
 
 // BCRYPT for passwords
 import bcrypt from 'bcrypt';
+
+// Middleware to read JSON in Body
+import { verifyToken } from '../middlewares/verifyToken.middleware';
+
+// Body Parser (Read JSON from Body in Requests)
+import bodyParser from 'body-parser';
+import { LogInfo } from '../utils/logger';
+
+// Middleware to read JSON in Body
+let jsonParser = bodyParser.json();
 
 // Router Express
 let authRouter = express.Router();
 
 authRouter
-  .route('/auth')
+  .route('/register')
   // REGISTER
-  .post(async (req: Request, res: Response) => {
-    let { name, mail, password, age } = req.body;
+  .post(jsonParser, async (req: Request, res: Response) => {
+    let { name, mail, password, age } = req?.body;
     let hashedPassword = '';
 
     if (name && mail && password && age) {
@@ -26,17 +36,28 @@ authRouter
         password: hashedPassword,
         age,
       };
+
       // Controller Instance to execute method
       const controller: AuthController = new AuthController();
+
       //Obtain response
       const response: any = await controller.registerUser(newUser);
+
       // Send to the client the response
       return res.status(200).send(response);
+    } else {
+      // Send to the client the response
+      return res.status(400).send({
+        message: `[ERROR User Data missing]: No user can be registered ${JSON.stringify(req.body)}`,
+      });
     }
-  })
+  });
+
+authRouter
+  .route('/login')
   // LOGIN
-  .post(async (req: Request, res: Response) => {
-    let { mail, password } = req.body;
+  .post(jsonParser, async (req: Request, res: Response) => {
+    let { mail, password } = req?.body;
 
     if (mail && password) {
       // Controller Instance to execute method
@@ -47,6 +68,12 @@ authRouter
         mail,
         password,
       };
+      LogInfo(
+        `[ LOGIN - ROUTER ] User: ${JSON.stringify({
+          mail: auth.mail,
+          password: auth.password,
+        })}`
+      );
 
       //Obtain response
       const response: any = await controller.loginUser(auth);
@@ -55,5 +82,26 @@ authRouter
       return res.status(200).send(response);
     }
   });
+
+// Route Protected by VERIFY TOKEN Middleware
+authRouter.route('/me').get(verifyToken, async (req: Request, res: Response) => {
+  // Obtain the ID of user to check it's data
+  let id: any = req?.query?.id;
+
+  if (id) {
+    // Controller: Auth Controller
+    const controller: AuthController = new AuthController();
+
+    // Obtain response from Controller
+    let response: any = await controller.userData(id);
+
+    // If user is authorised:
+    return res.status(200).send(response);
+  } else {
+    return res.status(401).send({
+      message: 'You are not authorised to perform this action',
+    });
+  }
+});
 
 export default authRouter;

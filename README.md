@@ -372,6 +372,24 @@ $ npm i -D @types/jsonwebtoken
 
 ```
 
+- **body-parser:** Parse incoming request bodies in a middleware before your handlers, available under the req.body property.
+
+```
+
+$ npm i body-parser
+
+```
+
+- **@types/body-parser:** Parse incoming request bodies in a middleware before your handlers, available under the req.body property.
+
+```
+
+$ npm i -D @types/body-parser
+
+
+
+```
+
 <!-- - **:**
 
 ```
