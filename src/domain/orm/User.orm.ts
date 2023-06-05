@@ -10,6 +10,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 import dotenv from 'dotenv';
+import { UserResponse } from '../types/UsersResponse.type';
 
 // Configuration the .env file
 dotenv.config();
@@ -22,15 +23,33 @@ const secret = process.env.SECRETKEY || 'MYSECRETKEY';
 /**
  * Method to obtain all Users from Collection 'Users' in Mongo Server
  */
-export const getAllUsers = async (): Promise<any[] | undefined> => {
+export const getAllUsers = async (page: number, limit: number): Promise<any[] | undefined> => {
   try {
-    let userModel = userEntity();
     LogSuccess(`[ ORM / GET - ALL USERS ] Success.`);
 
-    // Search all users
-    return await userModel.find();
+    let userModel = userEntity();
+
+    let response: any = {};
+
+    // Search all users (using pagination)
+    await userModel
+      .find()
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .exec()
+      .then((users: IUser[]) => {
+        response.users = users;
+      });
+
+    // Count total documents in collection "Users"
+    await userModel.countDocuments().then((total: number) => {
+      response.totalPages = Math.ceil(total / limit);
+      response.currentPage = page;
+    });
+
+    return response;
   } catch (error) {
-    LogError(`[ ORM / GET - ALL USERS ] Error: ${error}`);
+    LogError(`[ USER ORM / GET - ALL USERS ] Error: ${error}`);
   }
 };
 
@@ -38,12 +57,12 @@ export const getAllUsers = async (): Promise<any[] | undefined> => {
 export const getUserByID = async (id: string): Promise<any | undefined> => {
   try {
     let userModel = userEntity();
-    LogSuccess(`[ ORM / GET USER (ID) ] Success.`);
+    LogSuccess(`[ USER ORM / GET USER (ID) ] Success.`);
 
     // Search User By iD
-    return await userModel.findById(id);
+    return await userModel.findById(id).select('name email age katas');
   } catch (error) {
-    LogError(`[ ORM - GET USER (ID) ] Error: ${error}`);
+    LogError(`[ USER ORM - GET USER (ID) ] Error: ${error}`);
   }
 };
 
@@ -51,12 +70,12 @@ export const getUserByID = async (id: string): Promise<any | undefined> => {
 export const deleteUserByID = async (id: string): Promise<any | undefined> => {
   try {
     let userModel = userEntity();
-    LogSuccess(`[ ORM / DELETE USER (ID) ] Success.`);
+    LogSuccess(`[ USER ORM / DELETE USER (ID) ] Success.`);
 
     // DELETE User By iD
     return await userModel.findByIdAndDelete(id);
   } catch (error) {
-    LogError(`[ ORM - DELETE USER (ID) ] Error: ${error}`);
+    LogError(`[ USER ORM - DELETE USER (ID) ] Error: ${error}`);
   }
 };
 
@@ -64,12 +83,12 @@ export const deleteUserByID = async (id: string): Promise<any | undefined> => {
 export const createUser = async (user: any): Promise<any | undefined> => {
   try {
     let userModel = userEntity();
-    LogSuccess(`[ ORM / CREATE USER ] Success.`);
+    LogSuccess(`[ USER ORM / CREATE USER ] Success.`);
 
     // CREATE New User
     return await userModel.create(user);
   } catch (error) {
-    LogError(`[ ORM - CREATING USER ] Error: ${error}`);
+    LogError(`[ USER ORM - CREATING USER ] Error: ${error}`);
   }
 };
 
@@ -81,7 +100,7 @@ export const updateUserByID = async (id: string, user: any): Promise<any | undef
     // UPDATE User
     return await userModel.findByIdAndUpdate(id, user);
   } catch (error) {
-    LogError(`[ ORM - UPDATING USER ] Error updating user ${id}: ${error}`);
+    LogError(`[ USER ORM - UPDATING USER ] Error updating user ${id}: ${error}`);
   }
 };
 
@@ -89,12 +108,12 @@ export const updateUserByID = async (id: string, user: any): Promise<any | undef
 export const registerUser = async (user: IUser): Promise<any | undefined> => {
   try {
     let userModel = userEntity();
-    LogSuccess(`[ ORM / POST - REGISTER ] Success.`);
+    LogSuccess(`[ USER ORM / POST - REGISTER ] Success.`);
 
     // Register User
     return await userModel.create(user);
   } catch (error) {
-    LogError(`[ ORM / POST - REGISTER ] Error: ${error}`);
+    LogError(`[ USER ORM / POST - REGISTER ] Error: ${error}`);
   }
 };
 
@@ -113,16 +132,16 @@ export const loginUser = async (auth: IAuth): Promise<any | undefined> => {
         userFound = user;
       })
       .catch((error) => {
-        console.error(`[ERROR Authentication in ORM]: User Not Found`);
-        throw new Error(`[ERROR Authentication in ORM]: User Not Found: ${error}`);
+        console.error(`[ERROR Authentication in USER ORM]: User Not Found`);
+        throw new Error(`[ERROR Authentication in USER ORM]: User Not Found: ${error}`);
       });
 
     // Check if Password is Valid (compare with bcrypt)
     let validPassword = bcrypt.compareSync(auth.password, userFound!.password);
 
     if (!validPassword) {
-      console.error(`[ERROR Authentication in ORM]: Password Not Valid`);
-      throw new Error(`[ERROR Authentication in ORM]: Password Not Valid`);
+      console.error(`[ERROR Authentication in USER ORM]: Password Not Valid`);
+      throw new Error(`[ERROR Authentication in USER ORM]: Password Not Valid`);
     }
 
     // Generate our JWT
@@ -135,7 +154,7 @@ export const loginUser = async (auth: IAuth): Promise<any | undefined> => {
       token: token,
     };
   } catch (error) {
-    LogError(`[ ORM / POST - LOGIN ] Error: ${error}`);
+    LogError(`[ USER ORM / POST - LOGIN ] Error: ${error}`);
   }
 };
 

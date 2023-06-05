@@ -11,7 +11,7 @@ export interface IByeController {
 
 export interface IUsersController {
   // READ ALL USERS from Data Base || GET USER By ID
-  getUsers(id?: string): Promise<any>;
+  getUsers(page: number, limit: number, id?: string): Promise<any>;
 
   // DELETE USER by ID
   deleteUser(id?: string): Promise<any>;
@@ -21,7 +21,6 @@ export interface IUsersController {
 
   // UPDATE USER by ID
   updateUserByID(id: string, user: any): Promise<any>;
-
 }
 
 export interface IAuthController {

@@ -136,6 +136,24 @@
 				"security": [],
 				"parameters": [
 					{
+						"in": "query",
+						"name": "page",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
 						"description": "Id of user to retrieve (optional).",
 						"in": "query",
 						"name": "id",
