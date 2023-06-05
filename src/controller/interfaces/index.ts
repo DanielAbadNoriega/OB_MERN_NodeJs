@@ -29,3 +29,11 @@ export interface IAuthController {
   // login user
   loginUser(auth: any): Promise<any>;
 }
+
+export interface IKataController {
+  // READ ALL KATAS
+  getKatas(): Promise<any>;
+
+  // Filter Katas by Level
+  getKatasByLevel(): Promise<any>;
+}
